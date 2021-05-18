@@ -108,4 +108,52 @@ router.get('/user', auth, async (req, res) => {
     }
 });
 
+router.post('/resetpassword', async (req, res) =>{
+    const { email, newPassword } = req.body;
+    try {
+        const user = await User.findOne({ email});
+        if (!user) throw Error('User does not exist');
+
+        const salt = await bcrypt.genSalt(10);
+        if (!salt) throw Error('Something went wrong with bcrypt');
+    
+        const hash = await bcrypt.hash(newPassword, salt);
+        if (!hash) throw Error('Something went wrong hashing the password');
+
+        user.password = hash;
+        user.isNew = false;
+        user.save();
+
+        res.status(200).json({ msg: 'password updated succefully'});
+    } catch (e) {
+        res.status(400).json({ msg: e.message });
+    }
+});
+
+router.post('/secretquestion', async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await User.findOne({ email});
+        if (!user) throw Error('User does not exist');
+
+        res.status(200).json({ secretQuestion: user.secret_question});
+    } catch (e) {
+        res.status(400).json({ msg: e.message });
+    }
+});
+
+router.post('/secretresponse', async (req, res) => {
+    const { email, secretResponse } = req.body;
+    try {
+        const user = await User.findOne({ email});
+        if (!user) throw Error('User does not exist');
+
+        if (secretResponse === user.secret_response) return res.status(200).json({msg: 'OK'});
+        else throw Error('Wrong answer');
+
+    } catch (e) {
+        res.status(400).json({ msg: e.message });
+    }
+});
+
 module.exports = router;
