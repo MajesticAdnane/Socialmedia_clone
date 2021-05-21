@@ -58,7 +58,6 @@ router.post('/register', async (req, res) => {
                 email: savedUser.email,
             }
         });
-        //res.status(400).json({msg: 'eroooour'})
     } catch (e) {
         res.status(400).json({ msg: e.message });
     }
