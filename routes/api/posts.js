@@ -3,6 +3,7 @@ const router = Router();
 
 const auth = require('../../middleware/auth');
 const Post = require('../../models/Post');
+const User = require('../../models/User');
 
 router.post('/', auth, async (req, res) => {
     const newPost = new Post({
@@ -54,7 +55,8 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 router.get('/', auth, async (req, res) => {
-    const { userFriends } = req.body;
+
+    const userFriends = await User.findById(req.user.id).select('friends').friends;
 
     try {
         const posts = await Post.find({
