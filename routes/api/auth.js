@@ -81,7 +81,7 @@ router.post('/login', async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: 3600 });
         if (!token) throw Error('Couldnt sign the token');
-
+        
         res.status(200).json({
             token,
             user: {

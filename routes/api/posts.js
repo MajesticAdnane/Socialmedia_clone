@@ -56,8 +56,9 @@ router.delete('/:id', auth, async (req, res) => {
 
 router.get('/', auth, async (req, res) => {
 
-    const userFriends = await User.findById(req.user.id).select('friends').friends;
-
+    let userFriends = await User.findById(req.user.id).select('friends').friends;
+    if (!userFriends) userFriends = [''];
+    console.log('user\'s friends: ' + userFriends)
     try {
         const posts = await Post.find({
             'user_id': {
@@ -68,7 +69,7 @@ router.get('/', auth, async (req, res) => {
             }
         }).sort({post_date: 'descending'});
         if (!posts) throw Error('No posts');
-    
+        
         res.status(200).json(posts);
     } catch (e) {
         res.status(400).json({ msg: e.message });

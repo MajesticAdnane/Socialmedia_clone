@@ -15,6 +15,7 @@ module.exports = (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     // Add user from payload
     req.user = decoded;
+    
     next();
   } catch (e) {
     res.status(400).json({ msg: 'Token is not valid' });
